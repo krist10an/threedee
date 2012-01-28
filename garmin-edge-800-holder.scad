@@ -5,6 +5,8 @@
  *
  */
 
+use <logo.scad>
+
 // ---- Configuration ----
 
 // outer body
@@ -176,7 +178,11 @@ module garminedgeholder()
 	union() {
 		outerbody();
 		//cylinder(h=0.01, r=outer_radius*2);
-		/*color("green")*/ springloading();
+		difference() {
+			/*color("green")*/ springloading();
+			rotate([0,0,90]) translate([0,0,0.25-0.01]) logo(15, 0.5);
+		}
+
 		translate([0, 0, -holder_height+overlap]) /*color("blue")*/ holder();
 	}
 }
