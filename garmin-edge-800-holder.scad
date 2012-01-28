@@ -25,8 +25,8 @@ fo_width = 11.6;
 springload_dist_from_top = 3;
 
 springload_height = 1.6;
-springload_radius = 24/2;
-springload_width = fo_width;
+springload_radius = 23/2;
+springload_width = 10;
 
 // spring load slots
 slot_width =  2;
@@ -92,7 +92,7 @@ module outerbody()
 			// Main ring
 			ring(or=outer_radius, ir=inner_radius, h=height, center=false);
 			// Flange
-			translate([0,0,height-flange_height]) color("red") ring(outer_radius-overlap, flange_inner_radius, h=flange_height, center=false) ;
+			translate([0,0,height-flange_height]) /*color("red")*/ ring(outer_radius-overlap, flange_inner_radius, h=flange_height, center=false) ;
 		}
 		flange_opening();
 	}
@@ -176,13 +176,12 @@ module garminedgeholder()
 	union() {
 		outerbody();
 		//cylinder(h=0.01, r=outer_radius*2);
-		color("green") springloading();
-		//translate([0,0,springload_height]) cylinder(h=3, r=outer_radius*2);
-		translate([0, 0, -holder_height+overlap]) color("blue") holder();
+		/*color("green")*/ springloading();
+		translate([0, 0, -holder_height+overlap]) /*color("blue")*/ holder();
 	}
 }
 
-//$fn=100;
+$fn=100;
 echo("Body height");
 echo(height);
 echo(height+holder_height);
