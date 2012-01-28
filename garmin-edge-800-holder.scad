@@ -1,15 +1,23 @@
+/*
+ * Garmin Edge 800 velcro holder
+ *
+ * (c) krist10an 2012
+ *
+ */
+
+// ---- Configuration ----
 
 // outer body
-outer_diameter = 33.4;
-inner_diameter = 29;
+outer_radius = 33.4/2;
+inner_radius = 29/2;
 height = 5;
 
 // flange
-flange_inner_diameter = 25.4;
+flange_inner_radius = 25.4/2;
 flange_height = 1;
 
 // flange opening
-fo_diameter = inner_diameter;
+fo_radius = inner_radius;
 fo_height = 1.6;
 fo_width = 11.6;
 
@@ -18,7 +26,7 @@ fo_width = 11.6;
 springload_dist_from_top = 3;
 
 springload_height = 1.6;
-springload_diameter = 24;
+springload_radius = 24/2;
 springload_width = fo_width;
 
 
@@ -26,138 +34,110 @@ springload_width = fo_width;
 slot_width =  2;
 slot_length = 10;
 
-slot_pos_x = 6;
-slot_pos_y = slot_length - 2;
+slot_distance_x = 12;
+slot_distance_y= 5;
 
+// holder
+velcro_slot_height = 3;
+velcro_slot_width = 20;
+velcro_slot_offset = 2;
 
-module ring(outer_radius, inner_radius, height, center=false) {
+holder_height = 7;
+handlebar_radius = 30/2;
+
+/* -----
+ * Ring
+ *
+ * or=outer radius
+ * ir=inner radius
+ * h = height
+ */
+module ring(or, ir, h, center=false) {
 	difference() {
-		cylinder(r=outer_radius, h=height, center);
-		cyilnder(r=inner_radius, h=height*1.1, center);
+		cylinder(h=h, r=or, center=center);
+		cylinder(h=h+1, r=ir, center=center);
 	}
+}
+
+
+module flange_opening()
+{
+	opening_height = height+1;
+	// make cube with rounded ends which fits inside inner diameter
+	translate( [0,0,opening_height/2]) intersection() {
+			cylinder(r=fo_radius, h=opening_height, center=true);
+			cube(size=[fo_radius*2, fo_width, opening_height], center=true);
+	}
+
 }
 
 module outerbody()
 {
 	difference() {
-		// cylinder for outer diameter
-		cylinder(r=outer_diameter/2, h=height, center=true);
 		union() {
-			// remove center below flange
-			translate([0,0,flange_height]) cylinder(r=inner_diameter/2, h=height, center=true);
-			// remove everything inside flange
-			cylinder(r=flange_inner_diameter/2, h=height, center=true);
+			// Main ring
+			ring(or=outer_radius, ir=inner_radius, h=height, center=false);
+			// Flange
+			translate([0,0,height-flange_height]) color("red") ring(outer_radius, flange_inner_radius, h=flange_height, center=false) ;
 		}
+		flange_opening();
 	}
-
 }
 
-module flange_opening()
-{
 
-	// make cube with rounded ends which fits inside inner diameter
-	intersection() {
-			cylinder(r=fo_diameter/2, h=height, center=true);
-			cube(size=[fo_diameter, fo_width, height], center=true);
-	}
-
+module slot()  {
+			// main springload slots
+			translate([slot_width/2 + slot_distance_x/2, 
+					slot_length/2 + slot_distance_y/2,
+					0]) 
+						cube(size=[slot_width, 
+									slot_length, 
+									springload_height+1], center=true);
 }
+
 
 module springloading()
 {
-
-	// slot is cube which is curved in both ends
-	module slot() {
-		union () {
-			cube(size=[slot_width, slot_length, springload_height], center=true);
-			translate([0, slot_length/2, 0]) cylinder(r=slot_width/2, h=springload_height, center=true, $fn=30);
-			translate([0, -slot_length/2, 0]) cylinder(r=slot_width/2, h=springload_height, center=true, $fn=30);
-		}
-	}
-
-	module lock() {
-		cube(size=[1,2,height], center=true);
-	}
-
-	module connection_to_outside_wall() {
-		// connecting spring loading to outer walls
-		difference() {
-			intersection() {
-				cylinder(r=outer_diameter/2, h=springload_height, center=true);
-				cube(size=[outer_diameter, springload_width/2, springload_height], center=true);
-			}
-			// remove center, to allow slots to be anywhere
-			cylinder(r=springload_diameter/2, h=height, center=true);
-		}
-	}
-
-	module spring_tension() {
+	difference() {
 		union() {
-		rotate([-2, 0, 0]) cube(size=[springload_diameter/4, springload_diameter, springload_height], center=true);
-		rotate([2, 0, 0]) cube(size=[springload_diameter/4, springload_diameter, springload_height], center=true);
-		}
-	}
-
-
-	translate([0,0,-(height/2 + springload_height/2 - springload_dist_from_top)])  union() {
-		connection_to_outside_wall();
-
-		// actual spring loading
-		difference() {
-			cylinder(r=springload_diameter/2, h=springload_height, center=true);
-			translate([ slot_pos_x,  slot_pos_y, 0]) slot();
- 			translate([-slot_pos_x,  slot_pos_y, 0]) slot();
-			translate([ slot_pos_x, -slot_pos_y, 0]) slot();
-			translate([-slot_pos_x, -slot_pos_y, 0]) slot();
-		}
-		// locks
-
-		difference() {
-			union()  {
-				translate([0, springload_diameter/3, 0]) rotate([85,0,0]) lock();
-				translate([0, -springload_diameter/3, 0]) rotate([-85,0,0]) lock();
-				//spring_tension();
+			// main springload plate
+			intersection() {
+				cylinder(r=outer_radius, h=springload_height);
+				translate([0,0,springload_height/2]) cube(size=[outer_radius*2, springload_width, springload_height], center=true);
 			}
-			// burde være translate springload_height men jukser her:
-			translate([0,0, springload_height/2]) cylinder(r=springload_diameter/2, h=springload_height,  center=true);
+			cylinder(r=springload_radius, h=springload_height);
 		}
-
+		translate([0,0,(springload_height+1)/2]) union() {
+			rotate([0,0,0]) slot();
+			rotate([0,180,0]) slot();
+			rotate([0,0,180]) slot();
+			rotate([0,180,180]) slot();
+		}
 	}
-
 }
 
-velcro_slot_height = 3;
-velcro_slot_width = 20;
-velcro_slot_offset = 1;
-
-holder_height = 7;
-handlebar_diameter =30;
 
 module holder() {
-	difference() { 
+	difference() {
 		// outer body 
-		cylinder(r=outer_diameter/2, h=holder_height, center=true);
-		cylinder(r=inner_diameter/2, h=holder_height, center=true);
+		ring(or=outer_radius/2, ir=inner_radius, h=holder_height, center=false);
 
-		// velcro slots
-		translate([0, 0, -(holder_height/2-velcro_slot_height/2-velcro_slot_offset)]) rotate([0, 0, 0]) cube(size=[outer_diameter, velcro_slot_width, velcro_slot_height], center=true);
-//		translate([0, 0, -(holder_height/2-velcro_slot_height/2-velcro_slot_offset)]) rotate([0, 0, 90]) cube(size=[outer_diameter, velcro_slot_width, velcro_slot_height], center=true);
+		// velcro slot
+		translate([0, 0, holder_height - velcro_slot_height/2 - velcro_slot_offset]) rotate([0, 0, 0]) 
+				cube(size=[outer_radius * 2, velcro_slot_width, velcro_slot_height], center=true);
 
 		// handlebar curves
-		translate([0, 0, handlebar_diameter]) rotate([90, 0, 0]) cylinder(r=handlebar_diameter, h=outer_diameter, center=true, $fn=50);
-//		translate([0, 0, handlebar_diameter]) rotate([90, 0, 90]) cylinder(r=handlebar_diameter, h=outer_diameter, center=true, $fn=50);
+		translate([0, 0, -handlebar_radius * 2 + holder_height / 2]) rotate([90, 0, 0])
+				cylinder(r=handlebar_radius, h=outer_radius*2, center=true, $fn=50);
 	}
 }
 
 module garminedgeholder()
 {
 	union() {
-		difference() {
-			outerbody();
-			flange_opening();
-		}
-		translate([0, 0, height/2 - springload_height/2]) springloading();
-		translate([0, 0, height/2 + holder_height/2]) holder ();
+		outerbody();
+		color("green") springloading();
+		translate([0, 0, -holder_height+0.01-1]) color("blue") holder();
 	}
 }
 
