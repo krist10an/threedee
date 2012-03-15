@@ -42,7 +42,7 @@ velcro_slot_height = 3;
 velcro_slot_width = 22;
 velcro_slot_offset = 1;
 
-holder_height = 6;
+holder_height = 8;
 handlebar_radius = 30/2;
 
 
