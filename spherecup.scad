@@ -2,7 +2,7 @@
 // My sphere cup
 
 //cup size radius
-cupsize_total = 65;
+cupsize_total = 60;
 
 cupsize= cupsize_total /2;
 wall_thickness = 6;
@@ -72,5 +72,9 @@ difference() {
 		inside();
 		// Add extra wall for handle 
 		translate([cupsize, cupsize, 0]) sphere(r=cupsize);
+		// Add extra walls to make it cheaper
+		translate([-cupsize, -cupsize, 0]) sphere(r=cupsize);
+		translate([-cupsize, cupsize, 0]) sphere(r=cupsize);
+		translate([cupsize, -cupsize, 0]) sphere(r=cupsize);
 	}
 }
