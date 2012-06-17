@@ -13,14 +13,17 @@ ww = 40;
 
 innerh = 3.6;
 
+// overlap
+oo = 0.01;
+
 wall = (hh-innerh)/2;
 echo ("Top and bottom wall size=",wall);
 
  difference() {
 	cube(size=[ll,ww,hh],center=true);
 	//Corners
-	translate(v=[-ll/2+1,ww/2-1,1.5]) cube(size=[2,2,3],center=true);
-	translate(v=[ll/2-0.5,ww/2-1,1.5]) cube(size=[1,2,3],center=true);
+	translate(v=[-ll/2+1,ww/2-1,1.5]) cube(size=[2+oo,2+oo,3+oo],center=true);
+	translate(v=[ll/2-0.5,ww/2-1,1.5]) cube(size=[1+oo,2+oo,3+oo],center=true);
 
 	//+ and GND pins
 	//- Pin
@@ -48,6 +51,5 @@ echo ("Top and bottom wall size=",wall);
 	translate(v=[0,-2.5,0]) cube(size=[1,6,innerh],center=true);
 
 	//Room for female servo connector
-	translate(v=[0,-12.5,0]) cube(size=[8,15,innerh],center=true);
-
+	translate(v=[0,-12.5,0]) cube(size=[8,15+oo,innerh],center=true);
 }
