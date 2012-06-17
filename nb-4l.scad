@@ -52,4 +52,7 @@ echo ("Top and bottom wall size=",wall);
 
 	//Room for female servo connector
 	translate(v=[0,-12.5,0]) cube(size=[8,15+oo,innerh],center=true);
+
+	// Remove top to get convertible edition
+	translate(v=[5.28,0,hh-wall-oo]) cube(size=[20,ww+oo,hh],center=true);
 }
