@@ -120,14 +120,13 @@ def heightmap(data, size, outputfile, aspect, target_size):
 	make_ply(pts, tris,outputfile+".ply")
 
 def make_jpg(data, size, outfile):
-	im = Image.new("RGB",(size, size))
-	pix = im.load()
+	ppix = numpy.array(data)
+	im = Image.fromarray(ppix)
 
-	for x in xrange(size):
-		for y in xrange(size):
-			pix[x,y] = (0, int(data[x,y]), 0)
+	#imrgb = Image.merge('RGB', (im,im,im))
+	imrgb = im.convert("RGB")
 
-	im.save(outfile)
+	imrgb.save(outfile)
 	print "Saved JPG %s (Size=%dx%d)" % (outfile, size, size)
 
 def readhgt(filename):
