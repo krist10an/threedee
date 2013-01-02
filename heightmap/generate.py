@@ -1,3 +1,17 @@
+"""
+Script for parsing elevation data and generating output for a give
+lattitude/longitude
+
+Supported input:
+- STRM DEM (.hgt)
+
+Supported output:
+- Image (.jpg)
+- Model (.ply, .scad)
+
+Elevation data can be downloaded from:
+http://www.viewfinderpanoramas.org/dem3.html
+"""
 from __future__ import division
 
 from struct import unpack,calcsize
@@ -5,12 +19,6 @@ import Image
 import numpy
 import math
 from latlon import *
-
-"""
-Script for processing elevation data from:
-http://www.viewfinderpanoramas.org/
-
-"""
 
 def make_ply(pts, tris, outputfile):
 	fd = open(outputfile, "w")
