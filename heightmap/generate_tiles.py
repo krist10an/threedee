@@ -1,13 +1,17 @@
+"""
+Render HGT tiles to JPEG images
+
+usage: <script> inputfolder1 inputfolder2 ..
+"""
 from generate import *
+import sys
 import re
 
 name_match = re.compile("N([0-9][0-9])E([0-9][0-9][0-9])\.hgt")
 
-def gen_tile(filename):
-	out = os.path.join("output",filename+".jpg")
-	print filename, out
-
-	tilesize, mydata = readhgt(os.path.join(dir,filename))
+def gen_tile(inputfile, outputfile):
+	print "  Rendering %s to %s" %(inputfile, outputfile)
+	tilesize, mydata = readhgt(inputfile)
 	print "  Height min=%f, max=%f" % (mydata.min(), mydata.max())
 
 	data = mydata.astype(numpy.float64)
@@ -16,21 +20,40 @@ def gen_tile(filename):
 	data = data * 255 / 2600.0
 	print "  AdjustedHeight min=%f, max=%f" % (data.min(), data.max())
 
-	make_jpg(data, tilesize, out)
+	make_jpg(data, tilesize, outputfile)
 
-
-if __name__ == "__main__":
-
-	dir = "input/Q33"
-	#dir = "input-hi/"
+def generate(infolder, outfolder):
 	files = []
-	for filename in os.listdir(dir):
+	if not os.path.isdir(infolder):
+		return 0
+
+	for filename in os.listdir(infolder):
 		if name_match.match(filename):
 			files.append(filename)
 		else:
-			print "nomatch", filename
+			print "Ignoring file", filename
 
 	files.sort()
 
+	count = 0
 	for filename in files:
-		gen_tile(filename)
+		count += 1
+		inp  = os.path.join(infolder, filename)
+		outp = os.path.join(outfolder,filename+".jpg")
+		gen_tile(inp, outp)
+
+	return count
+
+if __name__ == "__main__":
+	try:
+		infolders = sys.argv[1:]
+	except:
+		print __doc__
+		sys.exit(1)
+
+	outfolder = "output"
+	count = 0
+	for folder in infolders:
+		count += generate(folder, outfolder)
+
+	print "Processed %d files and stored result in '%s'" % (count, outfolder)
