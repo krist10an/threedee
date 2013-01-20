@@ -45,15 +45,16 @@ def generate(infolder, outfolder):
 	return count
 
 if __name__ == "__main__":
-	try:
-		infolders = sys.argv[1:]
-	except:
+	if len(sys.argv) < 2:
 		print __doc__
 		sys.exit(1)
+
+	infolders = sys.argv[1:]
 
 	outfolder = "output"
 	count = 0
 	for folder in infolders:
+		print "Processing", folder
 		count += generate(folder, outfolder)
 
 	print "Processed %d files and stored result in '%s'" % (count, outfolder)
