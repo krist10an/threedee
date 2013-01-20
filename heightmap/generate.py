@@ -161,7 +161,7 @@ def readhgt(filename):
 	return tilesize, hgt_2darray
 
 
-def generate(latlon, distance, input, outfile):
+def generate(latlon, distance, target_size, target_height, minimum_height, remove_base_ele, input, outfile):
 	filename = latlon.filename(input)
 	if filename is None:
 		# Unable to find height data
@@ -211,11 +211,19 @@ def generate(latlon, distance, input, outfile):
 	zmax = data.max()
 	print "  Height for selected data: min=%f max=%f" % (zmin, zmax)
 
-	# Scale data to 0.0 - 1.0
-	data = data / zmax
+	# Remove base elevation
+	if remove_base_ele:
+		data = data - zmin
+
+	# Scale data to 0.0 - 1.
+	data = data / data.max()
+
+	if data.min() < minimum_height / target_height:
+		print "  Minimum elevation less than %f. Adding %f mm" % (minimum_height, minimum_height)
+		data = data + minimum_height / target_height
 
 	make_jpg(data*255, size, outfile+".jpg")
-	heightmap(data, size, outfile, aspect, 80, 25)
+	heightmap(data, size, outfile, aspect, target_size, target_height)
 
 
 
@@ -234,5 +242,11 @@ if __name__ == "__main__":
 	target = "GT"
 	name, latlon, radius = places[target]
 
+	# Target sizes (in mm)
+	target_size = 80
+	target_height = 15
+	min_height = 0.6
+	remove_base_ele = True
+
 	print "== Generating %s ==" % (name)
-	generate(latlon, radius, "input/", "output/heightmap")
+	generate(latlon, radius, target_size, target_height, min_height, remove_base_ele, "input/", "output/heightmap")
