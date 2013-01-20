@@ -211,16 +211,8 @@ def generate(latlon, distance, input, outfile):
 	zmax = data.max()
 	print "  Height for selected data: min=%f max=%f" % (zmin, zmax)
 
-	# Scale down to max possible elevation
-	padding = 10
-	max_ele = 2600
-	#base_ele = (zmin - padding) # remove base elevation
-	base_ele = -padding # add minimum for sea level
-
-	if zmax > max_ele:
-		print "WARNING: Height data larger than scale factor"
-
-	data = (data - base_ele) / max_ele
+	# Scale data to 0.0 - 1.0
+	data = data / zmax
 
 	make_jpg(data*255, size, outfile+".jpg")
 	heightmap(data, size, outfile, aspect, 80, 25)
