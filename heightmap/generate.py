@@ -236,6 +236,7 @@ if __name__ == "__main__":
 		'SNO' : ("Snohetta", LatLon((62, 19, 11), ( 9, 16,  3)), 4000),
 		'GP' : ("Galdhoepiggen", LatLon((61, 38,  7), ( 8, 18, 46)), 6000),
 		'ST' : ("Stetind", LatLon((68,  9, 55),(16, 35, 16)), 3000),
+		'MB' : ("Mont Blanc", LatLon((45, 50, 01),( 6, 51, 54)), 8000),
 	}
 
 	target = "GT"
