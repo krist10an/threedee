@@ -66,7 +66,7 @@ def make_scad(pts, tris, outputfile):
 	fd.close()
 	print "Saved scad %s" % (outputfile)
 
-def heightmap(data, size, outputfile, aspect, target_size):
+def heightmap(data, size, outputfile, aspect, target_size, target_height):
 	"""
 	Generate 3d model of heightmap
 
@@ -76,10 +76,10 @@ def heightmap(data, size, outputfile, aspect, target_size):
 	tris = []
 
 	center = size / 2
-	multiplier = 150 / size
+	multiplier = target_size / size
 
 	def mkpt(x,y,z):
-		return [(x-center)*multiplier, (y-center)*multiplier*aspect, z*40]
+		return [(x-center)*multiplier, (y-center)*multiplier*aspect, z*target_height]
 
 	for i in xrange(0,size):
 		for j in xrange(0,size):
@@ -126,6 +126,11 @@ def heightmap(data, size, outputfile, aspect, target_size):
 
 	#make_scad(pts, tris, outputfile+".scad")
 	make_ply(pts, tris,outputfile+".ply")
+
+	xbounds = max(pts, key=lambda item:item[0])[0] - min(pts, key=lambda item:item[0])[0]
+	ybounds = max(pts, key=lambda item:item[1])[1] - min(pts, key=lambda item:item[1])[1]
+	zbounds = max(pts, key=lambda item:item[2])[2] - min(pts, key=lambda item:item[2])[2]
+	print "  Model size %.1f x %.1f x %.1f mm" % (xbounds, ybounds, zbounds)
 
 def make_jpg(data, size, outfile):
 	ppix = numpy.array(data)
@@ -209,7 +214,7 @@ def generate(latlon, distance, input, outfile):
 	# Scale down to max possible elevation
 	padding = 10
 	max_ele = 2600
-	#base_ele = (zmin + padding) # remove base elevation
+	#base_ele = (zmin - padding) # remove base elevation
 	base_ele = -padding # add minimum for sea level
 
 	if zmax > max_ele:
@@ -218,7 +223,7 @@ def generate(latlon, distance, input, outfile):
 	data = (data - base_ele) / max_ele
 
 	make_jpg(data*255, size, outfile+".jpg")
-	heightmap(data, size, outfile, aspect, 150)
+	heightmap(data, size, outfile, aspect, 80, 25)
 
 
 
