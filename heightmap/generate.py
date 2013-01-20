@@ -213,10 +213,22 @@ def generate(latlon, distance, target_size, target_height, minimum_height, remov
 
 	# Remove base elevation
 	if remove_base_ele:
+		print "  Removing base elevation of %d" % (zmin)
 		data = data - zmin
 
 	# Scale data to 0.0 - 1.
 	data = data / data.max()
+
+	print "  Model scale data:"
+	# Calculate model scale
+	the_scale = meters / (target_size / 1000)
+	print "   Scale=1:%d (Real life=%d m, Model=%.1f mm)" % (the_scale, meters, target_size)
+
+	h = zmax
+	if remove_base_ele:
+		h = zmax - zmin
+	realistic_height = h / the_scale * 1000
+	print "    Model height=%.1f. Realistic height would be=%.1f" % (target_height, realistic_height)
 
 	if data.min() < minimum_height / target_height:
 		print "  Minimum elevation less than %f. Adding %f mm" % (minimum_height, minimum_height)
