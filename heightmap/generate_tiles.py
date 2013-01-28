@@ -20,7 +20,7 @@ def gen_tile(inputfile, outputfile):
 	data = data * 255 / 2600.0
 	print "  AdjustedHeight min=%f, max=%f" % (data.min(), data.max())
 
-	make_jpg(data, tilesize, outputfile)
+	make_jpg(data, outputfile)
 
 def generate(infolder, outfolder):
 	files = []
