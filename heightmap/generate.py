@@ -18,6 +18,7 @@ from struct import unpack,calcsize
 import Image
 import numpy
 import math
+import csv
 from latlon import *
 
 def make_ply(pts, tris, outputfile):
@@ -238,20 +239,35 @@ def generate(latlon, distance, target_size, target_height, minimum_height, remov
 	heightmap(data, size, outfile, aspect, target_size, target_height)
 
 
+def read_places_from_csv(placesfile):
+	places = {}
+	csvfile = open(placesfile, "r")
+	reader = csv.reader(csvfile, delimiter=";")
+	for row in reader:
+		# Strip away whitespace
+		row = [item.strip() for item in row]
+		try:
+			key = row[0]
+			name = row[1]
+			latn = row[2]
+			lat = [int(item) for item in row[3:6]]
+			lone = row[6]
+			lon = [int(item) for item in row[7:10]]
+			radius = int(row[10])
+			#print key, name, lat, lon, radius
+			places[key] = (name, LatLon(lat, lon), radius)
+		except:
+			print "Invalid line", row
+			#raise
+	print "Read %d places from %s" %(len(places),  placesfile)
+
+	return places
+
 
 if __name__ == "__main__":
-
-	places = {
-		'GT' : ("Gaustatoppen", LatLon((59, 51, 14), (8, 39, 0)), 8000),
-		'AB' : ("Austabotntind", LatLon((61, 26, 30), ( 7, 48,  3)), 4000),
-		'STOR' : ("Storen", LatLon((61, 27, 41), ( 7, 52, 26)), 8000),
-		'SNO' : ("Snohetta", LatLon((62, 19, 11), ( 9, 16,  3)), 4000),
-		'GP' : ("Galdhoepiggen", LatLon((61, 38,  7), ( 8, 18, 46)), 6000),
-		'ST' : ("Stetind", LatLon((68,  9, 55),(16, 35, 16)), 3000),
-		'MB' : ("Mont Blanc", LatLon((45, 50, 01),( 6, 51, 54)), 8000),
-	}
-
 	target = "GT"
+
+	places = read_places_from_csv("places.csv")
 	name, latlon, radius = places[target]
 
 	# Target sizes (in mm)
