@@ -3,22 +3,24 @@ Render HGT tiles to JPEG images
 
 usage: <script> inputfolder1 inputfolder2 ..
 """
-from generate import *
 import sys
 import re
+import os
+from elevation import *
+import debug
 
 name_match = re.compile("N([0-9][0-9])E([0-9][0-9][0-9])\.hgt")
 
 def gen_tile(inputfile, outputfile):
-	print "  Rendering %s to %s" %(inputfile, outputfile)
+	print "Rendering %s to %s" %(inputfile, outputfile)
 	tilesize, mydata = readhgt(inputfile)
-	print "  Height min=%f, max=%f" % (mydata.min(), mydata.max())
+	debug.write("Height min=%f, max=%f" % (mydata.min(), mydata.max()))
 
 	data = mydata.astype(numpy.float64)
 	# Flip to make sure North is up
 	data = numpy.flipud(data)
 	data = data * 255 / 2600.0
-	print "  AdjustedHeight min=%f, max=%f" % (data.min(), data.max())
+	debug.write("AdjustedHeight min=%f, max=%f" % (data.min(), data.max()))
 
 	make_jpg(data, outputfile)
 
@@ -45,13 +47,21 @@ def generate(infolder, outfolder):
 	return count
 
 if __name__ == "__main__":
-	if len(sys.argv) < 2:
-		print __doc__
-		sys.exit(1)
+	import argparse
+	parser = argparse.ArgumentParser(description="Generate JPEG images from all .hgt files in a given folder")
+	parser.add_argument('folder',
+		nargs="+", help='Input folder(s) to read .hgt files')
+	parser.add_argument('-o', '--output', dest='output', default="output/",
+		help='Folder name for output. Uses "output/" if nothing is specified')
+	parser.add_argument('-d', '--debug',dest='debug', action='store_const',
+		const=True, default=False, help='Enable debug output')
 
-	infolders = sys.argv[1:]
+	args = parser.parse_args()
 
-	outfolder = "output"
+	infolders = args.folder
+	outfolder = args.output
+	debug.enabled = args.debug
+
 	count = 0
 	for folder in infolders:
 		print "Processing", folder
