@@ -19,6 +19,16 @@ from latlon import *
 from elevation import *
 import debug
 
+def describe_model(name, the_scale, lowest_ele, highest_ele):
+	lines = []
+	w = lines.append
+
+	w("%s\n" % (name))
+	w("1/%d\n" % (the_scale))
+	w("%d - %d MASL" % (lowest_ele, highest_ele))
+
+	return lines
+
 def generate(latlon, distance, name, target_size, minimum_height, remove_base_ele, input, outfile):
 	filename = latlon.filename(input)
 	if filename is None:
@@ -78,7 +88,7 @@ def generate(latlon, distance, name, target_size, minimum_height, remove_base_el
 	print " Model height=%.1f mm (Real life=%d-%d meter)" % (target_height, lowest_ele, highest_ele)
 	print " Model scale=1:%d" % (the_scale)
 
-	text(name, the_scale, lowest_ele, highest_ele)
+	description = describe_model(name, the_scale, lowest_ele, highest_ele)
 
 	make_jpg(data * 255, outfile + ".jpg")
 
@@ -96,7 +106,7 @@ def generate(latlon, distance, name, target_size, minimum_height, remove_base_el
 	sy = xscale * (size_x / size_y)
 	sz = 1
 	debug.write("   Scale x=%f y=%f z=%f" % (sx, sy, sz))
-	make_scad(data, outfile + ".scad", sx, sy, sz)
+	make_scad(data, outfile + ".scad", sx, sy, sz, description)
 
 def read_places_from_csv(placesfile):
 	places = {}
@@ -121,33 +131,6 @@ def read_places_from_csv(placesfile):
 	#print "Read %d places from %s" %(len(places),  placesfile)
 
 	return places
-
-
-def text(name, the_scale, lowest_ele, highest_ele):
-	lines = []
-	w = lines.append
-
-	w("%s\n" % (name))
-	w("1/%d\n" % (the_scale))
-	w("%d - %d MASL" % (lowest_ele, highest_ele))
-
-	print scad(lines)
-
-def scad(lines):
-	scad = []
-	ws = scad.append
-
-	ws("use <font_DesignerBlock_lo.scad>")
-	ws("module desc(fontsize, linesize, hight) {")
-	y = 0
-	for line in lines:
-		ws("  translate([0, linesize*%d, 0]) label(\"%s\", size=fontsize, height=hight, align=\"C\");" % (y, line.strip()));
-		y -= 1
-
-	ws("};")
-
-	return '\n'.join(scad)
-
 
 if __name__ == "__main__":
 	placesfile = "places.csv"
