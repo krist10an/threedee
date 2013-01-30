@@ -31,7 +31,7 @@ def main():
 	num_n = fn_max - fn_min
 	num_e = fe_max - fe_min
 
-	filearray = [[0 for col in range(num_e+1)] for row in range(num_n+1)]
+	filearray = [[0 for col in range(num_e + 1)] for row in range(num_n + 1)]
 
 	part_size_w = 0
 	part_size_h = 0
@@ -60,14 +60,14 @@ def main():
 	h = part_size_h * num_n
 
 	final = Image.new("RGB", (w, h))
-	print "Creating image of dimentions",final.size
+	print "Creating image of dimentions", final.size
 	posy = 0
 	for row in filearray:
 		posx = 0
 		for iii in row:
 			if iii != 0:
-				filebane, i, w, h  = iii
-				final.paste(i, (posx*w,posy*h))
+				filebane, i, w, h = iii
+				final.paste(i, (posx * w, posy * h))
 			posx += 1
 		posy += 1
 

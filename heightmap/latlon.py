@@ -20,9 +20,7 @@ def calc_lat_len(deg):
 	bb = 559.822
 	cc = 1.175
 	phi = deg2rad(deg)
-	return aa - bb * math.cos(2*phi) + cc * math.cos(4*phi)
-
-
+	return aa - bb * math.cos(2 * phi) + cc * math.cos(4 * phi)
 
 def findInSubdirectory(filename, subdirectory=''):
 	if subdirectory:
@@ -42,9 +40,9 @@ def findInSubdirectory(filename, subdirectory=''):
 
 def get_val(deg, min, sec, min_only=False):
 	if min_only:
-		return min/60.0 + sec/3600.0
+		return min / 60.0 + sec / 3600.0
 	else:
-		return deg + min/60.0 + sec/3600.0
+		return deg + min / 60.0 + sec / 3600.0
 
 class LatLon(object):
 	"""
@@ -82,6 +80,6 @@ class LatLon(object):
 		#print "calc ration for", self.lon[0], self.lat[0]
 		lonl = calc_lon_len(self.lon[0])
 		latl = calc_lat_len(self.lat[0])
-		ratio = lonl/latl
+		ratio = lonl / latl
 		#print "  Lengde lat=%d, lon=%d, forhold=%f" % (lonl, latl, ratio)
 		return ratio

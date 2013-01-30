@@ -19,7 +19,7 @@ from latlon import *
 from elevation import *
 import debug
 
-def generate(latlon, distance, target_size, minimum_height, remove_base_ele, input, outfile):
+def generate(latlon, distance, name, target_size, minimum_height, remove_base_ele, input, outfile):
 	filename = latlon.filename(input)
 	if filename is None:
 		# Unable to find height data
@@ -43,14 +43,14 @@ def generate(latlon, distance, target_size, minimum_height, remove_base_ele, inp
 	debug.write("Length of 1\" lattitude=%f meter" % (lat_length))
 	debug.write("Using %dx%d array elements" % (size_x, size_y))
 
-	data = numpy.zeros(size_x*size_y, dtype=numpy.float64).reshape((size_x, size_y))
+	data = numpy.zeros(size_x * size_y, dtype=numpy.float64).reshape((size_x, size_y))
 	for y in xrange(size_y):
 		for x in xrange(size_x):
 			ylon = (lon - size_y / 2) + y
 			xlat = (lat + size_x / 2) - x
 			zzz = gethgt(hgt_2darray, xlat, ylon)
 
-			data[x,y] = zzz
+			data[x, y] = zzz
 
 	zmin = data.min()
 	zmax = data.max()
@@ -78,7 +78,9 @@ def generate(latlon, distance, target_size, minimum_height, remove_base_ele, inp
 	print " Model height=%.1f mm (Real life=%d-%d meter)" % (target_height, lowest_ele, highest_ele)
 	print " Model scale=1:%d" % (the_scale)
 
-	make_jpg(data*255, outfile+".jpg")
+	text(name, the_scale, lowest_ele, highest_ele)
+
+	make_jpg(data * 255, outfile + ".jpg")
 
 	# Scale data to target height
 	data = data * target_height
@@ -94,7 +96,7 @@ def generate(latlon, distance, target_size, minimum_height, remove_base_ele, inp
 	sy = xscale * (size_x / size_y)
 	sz = 1
 	debug.write("   Scale x=%f y=%f z=%f" % (sx, sy, sz))
-	make_scad(data, outfile+".scad", sx, sy, sz)
+	make_scad(data, outfile + ".scad", sx, sy, sz)
 
 def read_places_from_csv(placesfile):
 	places = {}
@@ -121,18 +123,43 @@ def read_places_from_csv(placesfile):
 	return places
 
 
+def text(name, the_scale, lowest_ele, highest_ele):
+	lines = []
+	w = lines.append
+
+	w("%s\n" % (name))
+	w("1/%d\n" % (the_scale))
+	w("%d - %d MASL" % (lowest_ele, highest_ele))
+
+	print scad(lines)
+
+def scad(lines):
+	scad = []
+	ws = scad.append
+
+	ws("use <font_DesignerBlock_lo.scad>")
+	ws("module desc(fontsize, linesize, hight) {")
+	y = 0
+	for line in lines:
+		ws("  translate([0, linesize*%d, 0]) label(\"%s\", size=fontsize, height=hight, align=\"C\");" % (y, line.strip()));
+		y -= 1
+
+	ws("};")
+
+	return '\n'.join(scad)
+
+
 if __name__ == "__main__":
 	placesfile = "places.csv"
 
 	places = read_places_from_csv(placesfile)
 	targets = ["%s (%s)" % (item, places[item][0]) for item in places.keys()]
 
-	import argparse
 	parser = argparse.ArgumentParser(description="Generate heightmap from elevation data")
 	parser.add_argument('target',
 		nargs=1,
-		help='The target to generate. Targets available from '+placesfile+' : ' + ' '.join(targets))
-	parser.add_argument('-d', '--debug',dest='debug', action='store_const',
+		help='The target to generate. Targets available from ' + placesfile + ' : ' + ' '.join(targets))
+	parser.add_argument('-d', '--debug', dest='debug', action='store_const',
 		const=True, default=False, help='Enable debug output')
 	parser.add_argument('-i', '--input', dest='input', default="input/",
 		help='Folder to read elevation data')
@@ -163,4 +190,4 @@ if __name__ == "__main__":
 		sys.exit(1)
 
 	print "== Generating %s ==" % (name)
-	generate(latlon, radius, target_size, min_height, remove_base_ele, infolder, outfolder)
+	generate(latlon, radius, name, target_size, min_height, remove_base_ele, infolder, outfolder)

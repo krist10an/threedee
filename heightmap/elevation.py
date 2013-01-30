@@ -1,5 +1,4 @@
 from __future__ import division
-from struct import unpack,calcsize
 import math
 import numpy
 import Image
@@ -11,7 +10,7 @@ def readhgt(filename):
 	f = open(filename, "rb")
 	hgt_string = f.read()
 
-	tilesize = int(math.sqrt(len(hgt_string)/2))
+	tilesize = int(math.sqrt(len(hgt_string) / 2))
 	if tilesize == 1201:
 		resolution = 3
 	elif tilesize == 3601:
@@ -21,7 +20,7 @@ def readhgt(filename):
 
 	debug.write(" Tile size %d Resolution %d\"" % (tilesize, resolution))
 
-	hgt_2darray = numpy.flipud(((numpy.fromstring(string=hgt_string, dtype='int16')).byteswap()).reshape(tilesize,tilesize))
+	hgt_2darray = numpy.flipud(((numpy.fromstring(string=hgt_string, dtype='int16')).byteswap()).reshape(tilesize, tilesize))
 	return tilesize, hgt_2darray
 
 def gethgt(hgt_2darray, lat, lon):
@@ -32,14 +31,12 @@ def gethgt(hgt_2darray, lat, lon):
 		print "No height for %d,%d" % (lat, lon)
 		return 0
 
-
-
 def make_scad(data, outputfile, scale_x, scale_y, scale_z):
 	datafile = outputfile + ".dat"
 	fd = open(datafile, "w")
 	for y in range(data.shape[1]):
 		for x in range(data.shape[0]):
-			fd.write("%f " % (data[x,y]))
+			fd.write("%f " % (data[x, y]))
 		fd.write("\n")
 	fd.close()
 	print "Saved data %s" % (datafile)

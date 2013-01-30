@@ -3,7 +3,6 @@ Render HGT tiles to JPEG images
 
 usage: <script> inputfolder1 inputfolder2 ..
 """
-import sys
 import re
 import os
 from elevation import *
@@ -12,7 +11,7 @@ import debug
 name_match = re.compile("N([0-9][0-9])E([0-9][0-9][0-9])\.hgt")
 
 def gen_tile(inputfile, outputfile):
-	print "Rendering %s to %s" %(inputfile, outputfile)
+	print "Rendering %s to %s" % (inputfile, outputfile)
 	tilesize, mydata = readhgt(inputfile)
 	debug.write("Height min=%f, max=%f" % (mydata.min(), mydata.max()))
 
@@ -41,7 +40,7 @@ def generate(infolder, outfolder):
 	for filename in files:
 		count += 1
 		inp  = os.path.join(infolder, filename)
-		outp = os.path.join(outfolder,filename+".jpg")
+		outp = os.path.join(outfolder, filename + ".jpg")
 		gen_tile(inp, outp)
 
 	return count
@@ -53,7 +52,7 @@ if __name__ == "__main__":
 		nargs="+", help='Input folder(s) to read .hgt files')
 	parser.add_argument('-o', '--output', dest='output', default="output/",
 		help='Folder name for output. Uses "output/" if nothing is specified')
-	parser.add_argument('-d', '--debug',dest='debug', action='store_const',
+	parser.add_argument('-d', '--debug', dest='debug', action='store_const',
 		const=True, default=False, help='Enable debug output')
 
 	args = parser.parse_args()
