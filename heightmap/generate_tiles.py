@@ -5,8 +5,9 @@ usage: <script> inputfolder1 inputfolder2 ..
 """
 import re
 import os
-from elevation import *
-import debug
+from lib.elevation import *
+from lib.generator import make_jpg
+import lib.debug as debug
 
 name_match = re.compile("N([0-9][0-9])E([0-9][0-9][0-9])\.hgt")
 

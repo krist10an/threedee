@@ -15,9 +15,10 @@ from __future__ import division
 import csv
 import argparse
 import sys
-from latlon import *
-from elevation import *
-import debug
+from lib.latlon import *
+from lib.elevation import *
+from lib.generator import *
+import lib.debug as debug
 
 def describe_model(name, the_scale, lowest_ele, highest_ele, exaggeration):
 	lines = []
