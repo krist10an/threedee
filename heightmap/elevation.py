@@ -76,7 +76,7 @@ def make_scad(data, outputfile, scale_x, scale_y, scale_z, textlines=None):
 	fd.write("   scale([%f, %f, %f])\n" % (scale_x, scale_y, scale_z))
 	fd.write("      surface(file = \"%s\", center = true, convexity = 5);\n" % (os.path.basename(datafile)))
 	if textlines is not None:
-		fd.write("  translate([0, 0, 1 - 0.5]) rotate([0, 180, 90]) desc(2, 6, 1);\n")
+		fd.write("  translate([0, 0, 1 - 0.5]) rotate([0, 180, 90]) desc(3, 10, 1);\n")
 
 	fd.write("};\n")
 	fd.close()

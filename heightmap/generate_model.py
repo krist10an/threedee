@@ -19,17 +19,18 @@ from latlon import *
 from elevation import *
 import debug
 
-def describe_model(name, the_scale, lowest_ele, highest_ele):
+def describe_model(name, the_scale, lowest_ele, highest_ele, exaggeration):
 	lines = []
 	w = lines.append
 
 	w("%s\n" % (name))
-	w("1/%d\n" % (the_scale))
-	w("%d - %d MASL" % (lowest_ele, highest_ele))
+	w("1 til %d\n" % (the_scale))
+	w("%d - %d MOH" % (lowest_ele, highest_ele))
+	w("MOH x %0.1f" % (exaggeration))
 
 	return lines
 
-def generate(latlon, distance, name, target_size, minimum_height, remove_base_ele, input, outfile):
+def generate(latlon, distance, name, target_size, minimum_height, remove_base_ele, elevation_exaggaration, input, outfile):
 	filename = latlon.filename(input)
 	if filename is None:
 		# Unable to find height data
@@ -85,15 +86,17 @@ def generate(latlon, distance, name, target_size, minimum_height, remove_base_el
 
 	print "Model scale data:"
 	print " Model length=%.1f mm (Real life=%d meter)" % (target_size, distance)
-	print " Model height=%.1f mm (Real life=%d-%d meter)" % (target_height, lowest_ele, highest_ele)
+	print " Model scale height=%.1f mm (Real life=%d-%d meter)" % (target_height, lowest_ele, highest_ele)
+	print " Model elevation exaggeration factor=%.1f" % (elevation_exaggaration)
+	print " Model exaggerated height=%.1f mm" % (target_height * elevation_exaggaration)
 	print " Model scale=1:%d" % (the_scale)
 
-	description = describe_model(name, the_scale, lowest_ele, highest_ele)
+	description = describe_model(name, the_scale, lowest_ele, highest_ele, elevation_exaggaration)
 
 	make_jpg(data * 255, outfile + ".jpg")
 
 	# Scale data to target height
-	data = data * target_height
+	data = data * target_height * elevation_exaggaration
 
 	if data.min() < minimum_height:
 		print " Adding minimum height of %.1f mm" % (minimum_height)
@@ -154,6 +157,8 @@ if __name__ == "__main__":
 		help='Minimum height for elevation data (in millimeter). Default: 0.6')
 	parser.add_argument('-b', '--base', dest='base', action="store_const", const=True, default=False,
 		help='Remove base elevation')
+	parser.add_argument('-x', dest='ele_exaggeration', type=float, default=1,
+		help='Elevation exaggeration adjustment. Default: 1.0, no exaggeration')
 
 	args = parser.parse_args()
 
@@ -164,6 +169,7 @@ if __name__ == "__main__":
 	target_size = args.size
 	min_height = args.minheight
 	remove_base_ele = args.base
+	ele_exaggeration = args.ele_exaggeration
 
 	try:
 		name, latlon, radius = places[target]
@@ -173,4 +179,4 @@ if __name__ == "__main__":
 		sys.exit(1)
 
 	print "== Generating %s ==" % (name)
-	generate(latlon, radius, name, target_size, min_height, remove_base_ele, infolder, outfolder)
+	generate(latlon, radius, name, target_size, min_height, remove_base_ele, ele_exaggeration, infolder, outfolder)
