@@ -56,8 +56,8 @@ def main():
 
 	print "Total of %d files" % (len(files))
 
-	w = part_size_w * num_e
-	h = part_size_h * num_n
+	w = part_size_w * (num_e + 1)
+	h = part_size_h * (num_n + 1)
 
 	final = Image.new("RGB", (w, h))
 	print "Creating image of dimentions", final.size
