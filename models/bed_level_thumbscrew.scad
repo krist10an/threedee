@@ -3,7 +3,7 @@ include <MCAD/boxes.scad>
 
 fit = 1.05;
 
-difference() {
+rotate([0, 180, 0]) difference() {
 	union() {
 		roundedBox([30,10, 4], 5, true, $fn=50);
 	}
