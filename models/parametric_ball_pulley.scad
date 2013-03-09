@@ -12,10 +12,10 @@ $fs = 0.4;
 fastening_method = 0;
 
 // General options
-shaft_diameter = 5.3;
-ball_diameter = 5.0;
+shaft_diameter = 5.1;
+ball_diameter = 3.7;
 ball_count = 24;
-ball_spacing = 5.1; // The distance from the centre of one ball to the next
+ball_spacing = 4.5; // The distance from the centre of one ball to the next
 link_diameter = 0.9;
 
 // Screw options
