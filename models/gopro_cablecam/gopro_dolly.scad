@@ -3,8 +3,9 @@
 // Derivative of: http://www.thingiverse.com/thing:391146
 tol = 0.01;
 
+washer = 1.5;
 pulley_bolt_diameter = 8;
-pulley_depth = 7+0.2;
+pulley_depth = 7 + 2*washer + 0.2;
 pulley_outer_radius = 10;
 
 body_length = 120;
