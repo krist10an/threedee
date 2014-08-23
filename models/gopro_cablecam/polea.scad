@@ -1,24 +1,28 @@
-// Polea para tirolina
-// Hay que imprimir 2 y pegarlas
-// para tener la polea completa
+// Pulley zip line
 //
-// Diametro exterior del rodamiento
-// Valor maximo: 9
-Rod = 8;
-// Factor de contracción del ABS al enfriar
+// Derivative of: http://www.thingiverse.com/thing:391146
+//
+// Have to print 2 for complete pulley
+// Designed to fit a 7mm wide bearing
+//
+// Outer diameter of the bearing
+// Maximum Value: 26
+Rod = 22;
+// ABS shrinkage factor upon cooling
 Contr = 0.1;
-//
-Diametro = Rod + Contr ;
 
+Diametro = Rod / 2 + Contr ;
+
+$fn=180;
 difference() {
 union() {
-  cylinder(h=1, r=15, $fn=180);
+  cylinder(h=1, r=17);
   translate([0,0,1]) {
-    cylinder(h=2.5, r1=15, r2=11, $fn=180);
+    cylinder(h=2, r1=17, r2=13);
   }
-  translate([0,0,3.5]) {
-    cylinder(h=1.5, r=11, $fn=180);
+  translate([0,0,3]) {
+    cylinder(h=0.5, r=13);
   }
 }
-cylinder(h=10, r=Diametro, $fn=180);
+translate([0,0,-0.01]) cylinder(h=10, r=Diametro);
 }
