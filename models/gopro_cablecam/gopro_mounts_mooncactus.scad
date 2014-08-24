@@ -2,9 +2,9 @@
 /* [Main] */
 
 // First head kind ("example" show them all but is not printable)
-gopro_primary="example"; // [example,triple,double]
+gopro_primary="triple"; // [example,triple,double]
 // The other head kind (only for the triple or double primary kind)
-gopro_secondary_what="triple"; // [double,triple,rod,clamp,none]
+gopro_secondary_what="rod"; // [double,triple,rod,clamp,none]
 // If ever you rotate the seconday head you will probably need to enable support to print it
 gopro_secondary_rotated=0; // [0:false,1:true]
 
@@ -18,7 +18,7 @@ gopro_ext_th=3;
 // This tab is useful only if you have selected "rod" as the secondary head. The optional rod diameter (also the captive nut internal diameter)
 gopro_captive_rod_id= 3.8;
 // The angle the rod makes with the axis (0 is colinear, 90 is a right angle)
-gopro_captive_rod_angle= 45; // [0:90]
+gopro_captive_rod_angle= 0; // [0:90]
 // Optional captive nut thickness with freeplay (tightest would be 3.2)
 gopro_rod_nut_th= 3.6;
 // Optional captive nut diameter with freeplay (from corner to corner)
